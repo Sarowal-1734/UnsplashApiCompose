@@ -24,10 +24,10 @@ import com.example.unsplashapicompose.ui.unsplash_photos.screens.UnsplashPhotoDe
 import com.example.unsplashapicompose.ui.unsplash_photos.screens.UnsplashPhotosScreen
 
 sealed class Screens(val title: String, val route: String) {
-    object UnsplashPhotosScreen :
+    object UnsplashPhotos :
         Screens("Unsplash Photos", "unsplash-photos")
 
-    object UnsplashPhotoDetailsScreen :
+    object UnsplashPhotoDetails :
         Screens(
             "Unsplash Photo Details",
             "unsplash-photo-details/{id}"
@@ -55,16 +55,16 @@ fun UnsplashMainScreen(
         ) {
             NavHost(
                 navController = navController,
-                startDestination = Screens.UnsplashPhotosScreen.route
+                startDestination = Screens.UnsplashPhotos.route
             ) {
-                composable(Screens.UnsplashPhotosScreen.route) {
+                composable(Screens.UnsplashPhotos.route) {
                     val uiState by unsplashPhotosViewModel.uiState.collectAsState()
                     UnsplashPhotosScreen(
                         viewState = uiState,
                         events = unsplashPhotosViewModel::handleEvent
                     )
                 }
-                composable(Screens.UnsplashPhotoDetailsScreen.route) { backStackEntry ->
+                composable(Screens.UnsplashPhotoDetails.route) { backStackEntry ->
                     val id = backStackEntry.arguments?.getString("id")
                     val uiState by unsplashPhotosViewModel.uiState.collectAsState()
                     UnsplashPhotoDetailsScreen(
@@ -78,10 +78,10 @@ fun UnsplashMainScreen(
         }
     }
     navigationManager.commands.collectAsState().value.also { command ->
+        Log.e("ASD", "3")
         if (command.destination.isNotEmpty()) {
             when {
-                command.destination.startsWith("unsplash-photo-details") ||
-                        command.destination == Screens.UnsplashPhotoDetailsScreen.route -> {
+                command.destination.startsWith("unsplash-photo-det") -> {
                     setIsNested(true)
                     navController.navigate(command.destination) {
                         launchSingleTop = true
@@ -103,8 +103,4 @@ fun UnsplashMainScreen(
             }
         }
     }
-}
-
-fun refreshUI() {
-    // TODO HERE
 }

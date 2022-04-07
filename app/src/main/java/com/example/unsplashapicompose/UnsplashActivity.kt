@@ -2,6 +2,7 @@ package com.example.unsplashapicompose
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -103,6 +104,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
             navigationManager.commands.collectAsState().value.also { command ->
+                Log.e("ASD", "1")
                 if (command.destination.isNotEmpty()) {
                     when (command.destination) {
                         MainDirections.main.destination -> {

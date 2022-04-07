@@ -10,8 +10,8 @@ object HomeDirections {
         override val destination = "home"
     }
 
-    val deliveryPlan = object : NavigationCommand {
+    val unsplashPhotosDetails = object : NavigationCommand {
         override val arguments = emptyList<NamedNavArgument>()
-        override val destination = Screens.UnsplashPhotoDetailsScreen.route
+        override val destination = Screens.UnsplashPhotoDetails.route
     }
 }

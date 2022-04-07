@@ -50,7 +50,7 @@ fun UnsplashPhotosScreen(
         events(UnsplashPhotoEvent.FetchUnsplashPhotos(""))
     }
 
-    val unsplashPhotos = viewState.unsplashPhotosResults?.collectAsLazyPagingItems()
+    val unsplashPhotos = viewState.unsplashPhotosResult?.collectAsLazyPagingItems()
 
     Column(
         modifier = Modifier
@@ -136,8 +136,8 @@ fun UnsplashPhotosScreen(
             LazyColumn {
                 itemsIndexed(
                     items = unsplashPhotos
-                ) { index, item ->
-                    UnsplashPhotoItem(index, item, events)
+                ) { _, item ->
+                    UnsplashPhotoItem(item, events)
                 }
             }
             unsplashPhotos.apply {
@@ -160,7 +160,6 @@ fun UnsplashPhotosScreen(
 
 @Composable
 fun UnsplashPhotoItem(
-    index: Int = 0,
     unsplashPhotos: UnsplashPhoto? = null,
     events: (event: UnsplashPhotoEvent) -> Unit = {}
 ) {
@@ -178,7 +177,7 @@ fun UnsplashPhotoItem(
             modifier = Modifier
                 .fillMaxSize()
                 .clickable {
-                    events(UnsplashPhotoEvent.ViewDeliveryPlan(unsplashPhotos!!.id))
+                    events(UnsplashPhotoEvent.ViewUnsplashPhoto(unsplashPhotos?.urls?.regular!!))
                 },
             contentScale = ContentScale.Crop
         )
