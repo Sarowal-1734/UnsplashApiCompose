@@ -41,7 +41,7 @@ sealed class Screens(val title: String, val route: String) {
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
 @Composable
-fun NuportMainScreen(
+fun UnsplashMainScreen(
     navigationManager: NavigationManager
 ) {
     val navController = rememberNavController()
