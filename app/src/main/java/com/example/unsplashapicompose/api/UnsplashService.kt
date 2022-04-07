@@ -5,6 +5,7 @@ import com.example.unsplashapicompose.data.PaginationResponse
 import com.example.unsplashapicompose.data.model.UnsplashPhoto
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -17,7 +18,7 @@ interface UnsplashService {
         @Query("query") query: String,
         @Query("page") page: Int = 0,
         @Query("per_page") per_page: Int = 10
-    ): PaginationResponse<UnsplashPhoto>
+    ): Response<PaginationResponse<UnsplashPhoto>>
 
     companion object {
         fun create(): UnsplashService {

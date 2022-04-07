@@ -25,5 +25,4 @@ class UnsplashPhotosRepository @Inject constructor(
             pagingSourceFactory = { UnsplashPhotosPageSource(service, query) }
         ).flow
     }
-
 }

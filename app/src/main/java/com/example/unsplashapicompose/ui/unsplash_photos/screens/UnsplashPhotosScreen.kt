@@ -13,6 +13,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -42,7 +44,14 @@ fun UnsplashPhotosScreen(
     viewState: UnsplashPhotoState = UnsplashPhotoState(),
     events: (event: UnsplashPhotoEvent) -> Unit = {}
 ) {
-    val unsplashPhotos = viewState.unsplashPhotosResult?.collectAsLazyPagingItems()
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(Unit) {
+        events(UnsplashPhotoEvent.FetchUnsplashPhotos(""))
+    }
+
+    val unsplashPhotos = viewState.unsplashPhotosResults?.collectAsLazyPagingItems()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -54,9 +63,12 @@ fun UnsplashPhotosScreen(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Search
             ),
-            keyboardActions = KeyboardActions {
-
-            },
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    focusManager.clearFocus()
+                    events(UnsplashPhotoEvent.FetchUnsplashPhotos(viewState.searchQuery))
+                }
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -79,9 +91,9 @@ fun UnsplashPhotosScreen(
                 fontSize = 14.sp
             ),
             singleLine = true,
-            value = viewState.searchQuery,
+            value = viewState.searchQuery!!,
             onValueChange = {
-                viewState.searchQuery = it
+                events(UnsplashPhotoEvent.SearchQueryChangedAcknowledged(it))
             },
             decorationBox = { innerTextField ->
                 Box(
@@ -89,7 +101,7 @@ fun UnsplashPhotosScreen(
                     contentAlignment = Alignment.CenterStart
                 ) {
                     Box {
-                        if (viewState.searchQuery.isEmpty()) {
+                        if (viewState.searchQuery.isNullOrEmpty()) {
                             Text(
                                 text = "Search...",
                                 color = Gray,
@@ -103,7 +115,10 @@ fun UnsplashPhotosScreen(
                     IconButton(
                         modifier = Modifier
                             .align(Alignment.CenterEnd),
-                        onClick = { unsplashPhotos?.refresh() }
+                        onClick = {
+                            focusManager.clearFocus()
+                            events(UnsplashPhotoEvent.FetchUnsplashPhotos(viewState.searchQuery))
+                        }
                     ) {
                         Icon(
                             painter = painterResource(R.drawable.ic_search),

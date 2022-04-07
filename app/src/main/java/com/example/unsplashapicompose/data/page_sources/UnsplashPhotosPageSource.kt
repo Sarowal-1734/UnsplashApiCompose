@@ -15,8 +15,8 @@ class UnsplashPhotosPageSource(
         return try {
             val response =
                 unsplashService.getUnsplashPhotos(query, page, DEFAULT_PAGE_SIZE)
-            val unsplashPhotos = response.results
-            val lastPage = unsplashPhotos.size < DEFAULT_PAGE_SIZE
+            val unsplashPhotos = response.body()?.results
+            val lastPage = unsplashPhotos?.size!! < DEFAULT_PAGE_SIZE
             LoadResult.Page(
                 data = unsplashPhotos,
                 prevKey = if (page == 0) null else page - 1,

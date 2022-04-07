@@ -5,8 +5,9 @@ import com.example.unsplashapicompose.data.model.UnsplashPhoto
 import kotlinx.coroutines.flow.Flow
 
 class UnsplashPhotoState(
-    val unsplashPhotosResult: Flow<PagingData<UnsplashPhoto>>? = null,
-    var searchQuery: String = "Cute Baby",
+    val unsplashPhotosResult: ArrayList<UnsplashPhoto>? = ArrayList(),
+    val unsplashPhotosResults: Flow<PagingData<UnsplashPhoto>>? = null,
+    var searchQuery: String? = "",
     val isSearchingPhotos: Boolean = false
 ) {
 
@@ -14,12 +15,14 @@ class UnsplashPhotoState(
 
     class Builder(state: UnsplashPhotoState) {
         var unsplashPhotosResult = state.unsplashPhotosResult
+        var unsplashPhotosResults = state.unsplashPhotosResults
         var searchQuery = state.searchQuery
         var isSearchingPhotos = state.isSearchingPhotos
 
         fun build(): UnsplashPhotoState {
             return UnsplashPhotoState(
                 unsplashPhotosResult,
+                unsplashPhotosResults,
                 searchQuery,
                 isSearchingPhotos
             )
