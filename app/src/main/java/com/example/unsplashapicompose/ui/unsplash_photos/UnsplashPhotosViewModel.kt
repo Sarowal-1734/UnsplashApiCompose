@@ -1,7 +1,9 @@
 package com.example.unsplashapicompose.ui.unsplash_photos
 
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NamedNavArgument
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.example.unsplashapicompose.data.model.UnsplashPhoto
 import com.example.unsplashapicompose.data.repositories.UnsplashPhotosRepository
 import com.example.unsplashapicompose.navigation.NavigationCommand
@@ -35,21 +37,20 @@ class UnsplashPhotosViewModel @Inject constructor(
                 }
             }
             is UnsplashPhotoEvent.ViewUnsplashPhoto -> {
+                _uiState.value = uiState.value.build {
+                    this.unsplashPhoto = event.unsplashPhoto
+                }
                 navigationManager.navigate(object : NavigationCommand {
                     override val arguments = emptyList<NamedNavArgument>()
                     override val destination =
-                        Screens.UnsplashPhotoDetails.createRoute(event.url)
+                        Screens.UnsplashPhotoDetails.createRoute(event.unsplashPhoto?.user?.name!!)
                 })
-            }
-            else -> {
-                // No-op
             }
         }
     }
 
     private fun applyEvents(
-        paging: PagingData<UnsplashPhoto>,
-        event: UnsplashPhotoEvent
+        paging: PagingData<UnsplashPhoto>
     ): PagingData<UnsplashPhoto> {
         return paging
     }
@@ -57,14 +58,14 @@ class UnsplashPhotosViewModel @Inject constructor(
     private fun searchPhotos(query: String) {
         val modificationEvents = MutableStateFlow<List<UnsplashPhotoEvent>>(emptyList())
         val unsplashPhotos = repository.getUnsplashPhotoStream(query)
+            .cachedIn(viewModelScope)
             .combine(modificationEvents) { pagingData, modifications ->
-                modifications.fold(pagingData) { acc, event ->
-                    applyEvents(acc, event)
+                modifications.fold(pagingData) { acc, _ ->
+                    applyEvents(acc)
                 }
             }
         _uiState.value = uiState.value.build {
             this.unsplashPhotosResults = unsplashPhotos
         }
     }
-
 }

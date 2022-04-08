@@ -16,24 +16,22 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.unsplashapicompose.navigation.NavigationManager
 import com.example.unsplashapicompose.ui.unsplash_photos.UnsplashPhotosViewModel
 import com.example.unsplashapicompose.ui.unsplash_photos.screens.UnsplashPhotoDetailsScreen
 import com.example.unsplashapicompose.ui.unsplash_photos.screens.UnsplashPhotosScreen
 
-sealed class Screens(val title: String, val route: String) {
+sealed class Screens(val route: String) {
     object UnsplashPhotos :
-        Screens("Unsplash Photos", "unsplash-photos")
+        Screens("unsplash-photos")
 
     object UnsplashPhotoDetails :
         Screens(
-            "Unsplash Photo Details",
-            "unsplash-photo-details/{id}"
+            "unsplash-photo-details/{userName}"
         ) {
-        fun createRoute(id: String): String {
-            return "unsplash-photo-details/${id}"
+        fun createRoute(userName: String): String {
+            return "unsplash-photo-details/${userName}"
         }
     }
 }
@@ -41,12 +39,9 @@ sealed class Screens(val title: String, val route: String) {
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
 @Composable
-fun UnsplashMainScreen(
-    navigationManager: NavigationManager
-) {
+fun UnsplashMainScreen(navigationManager: NavigationManager) {
     val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val (isNested, setIsNested) = rememberSaveable { mutableStateOf(false) }
+    val (_, setIsNested) = rememberSaveable { mutableStateOf(false) }
     val unsplashPhotosViewModel = hiltViewModel<UnsplashPhotosViewModel>()
 
     Surface(color = MaterialTheme.colors.background) {
@@ -65,10 +60,10 @@ fun UnsplashMainScreen(
                     )
                 }
                 composable(Screens.UnsplashPhotoDetails.route) { backStackEntry ->
-                    val id = backStackEntry.arguments?.getString("id")
+                    val userName = backStackEntry.arguments?.getString("userName")
                     val uiState by unsplashPhotosViewModel.uiState.collectAsState()
                     UnsplashPhotoDetailsScreen(
-                        id = id,
+                        userName = userName,
                         viewState = uiState,
                         onBack = { navController.popBackStack() },
                         events = unsplashPhotosViewModel::handleEvent
@@ -78,10 +73,10 @@ fun UnsplashMainScreen(
         }
     }
     navigationManager.commands.collectAsState().value.also { command ->
-        Log.e("ASD", "3")
         if (command.destination.isNotEmpty()) {
             when {
-                command.destination.startsWith("unsplash-photo-det") -> {
+                command.destination == Screens.UnsplashPhotoDetails.route ||
+                        command.destination.startsWith("unsplash-photo-details") -> {
                     setIsNested(true)
                     navController.navigate(command.destination) {
                         launchSingleTop = true

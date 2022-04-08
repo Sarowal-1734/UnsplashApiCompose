@@ -6,7 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 class UnsplashPhotoState(
     val unsplashPhotosResult: Flow<PagingData<UnsplashPhoto>>? = null,
-    var searchQuery: String? = "",
+    val searchQuery: String? = "",
+    val unsplashPhoto: UnsplashPhoto? = null,
     val isSearchingPhotos: Boolean = false
 ) {
 
@@ -15,12 +16,14 @@ class UnsplashPhotoState(
     class Builder(state: UnsplashPhotoState) {
         var unsplashPhotosResults = state.unsplashPhotosResult
         var searchQuery = state.searchQuery
+        var unsplashPhoto = state.unsplashPhoto
         var isSearchingPhotos = state.isSearchingPhotos
 
         fun build(): UnsplashPhotoState {
             return UnsplashPhotoState(
                 unsplashPhotosResults,
                 searchQuery,
+                unsplashPhoto,
                 isSearchingPhotos
             )
         }

@@ -160,7 +160,7 @@ fun UnsplashPhotosScreen(
 
 @Composable
 fun UnsplashPhotoItem(
-    unsplashPhotos: UnsplashPhoto? = null,
+    unsplashPhoto: UnsplashPhoto? = null,
     events: (event: UnsplashPhotoEvent) -> Unit = {}
 ) {
     Card(
@@ -172,12 +172,12 @@ fun UnsplashPhotoItem(
         shape = RoundedCornerShape(16.dp)
     ) {
         Image(
-            painter = rememberAsyncImagePainter(unsplashPhotos?.urls?.regular),
+            painter = rememberAsyncImagePainter(unsplashPhoto?.urls?.regular),
             contentDescription = "Unsplash Image",
             modifier = Modifier
                 .fillMaxSize()
                 .clickable {
-                    events(UnsplashPhotoEvent.ViewUnsplashPhoto(unsplashPhotos?.urls?.regular!!))
+                    events(UnsplashPhotoEvent.ViewUnsplashPhoto(unsplashPhoto))
                 },
             contentScale = ContentScale.Crop
         )
