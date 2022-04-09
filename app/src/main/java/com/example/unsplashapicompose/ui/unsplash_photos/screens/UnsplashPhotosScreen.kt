@@ -47,7 +47,7 @@ fun UnsplashPhotosScreen(
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
-        events(UnsplashPhotoEvent.FetchUnsplashPhotos(""))
+        events(UnsplashPhotoEvent.FetchUnsplashPhotos(viewState.searchQuery))
     }
 
     val unsplashPhotos = viewState.unsplashPhotosResult?.collectAsLazyPagingItems()
