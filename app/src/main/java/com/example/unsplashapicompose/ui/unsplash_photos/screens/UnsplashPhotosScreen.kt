@@ -17,8 +17,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Gray
+import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -181,5 +185,26 @@ fun UnsplashPhotoItem(
                 },
             contentScale = ContentScale.Crop
         )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Transparent, Black),
+                        startY = 400f
+                    )
+                )
+        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            contentAlignment = Alignment.BottomStart
+        ) {
+            Text(
+                text = "${unsplashPhoto?.user?.name}",
+                style = TextStyle(color = White, fontSize = 16.sp)
+            )
+        }
     }
 }
