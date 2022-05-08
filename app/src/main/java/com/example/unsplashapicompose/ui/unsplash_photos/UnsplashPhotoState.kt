@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 class UnsplashPhotoState(
     val unsplashPhotosResult: Flow<PagingData<UnsplashPhoto>>? = null,
-    val searchQuery: String? = "",
+    val searchQuery: String = "",
     val unsplashPhoto: UnsplashPhoto? = null,
     val isSearchingPhotos: Boolean = false
 ) {

@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -14,11 +15,12 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.Gray
 import androidx.compose.ui.graphics.Color.Companion.Transparent
@@ -28,6 +30,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -49,11 +52,18 @@ fun UnsplashPhotosScreen(
     events: (event: UnsplashPhotoEvent) -> Unit = {}
 ) {
     val focusManager = LocalFocusManager.current
+    val listState = rememberLazyListState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(Unit, viewState.searchQuery) {
         events(UnsplashPhotoEvent.FetchUnsplashPhotos(viewState.searchQuery))
     }
 
+    val (searchQuery, setSearchQuery) = rememberSaveable { mutableStateOf("") }
+    val (isVisibleNoSearchResult, setIsVisibleNoSearchResult) = rememberSaveable {
+        mutableStateOf(
+            false
+        )
+    }
     val unsplashPhotos = viewState.unsplashPhotosResult?.collectAsLazyPagingItems()
 
     Column(
@@ -65,12 +75,11 @@ fun UnsplashPhotosScreen(
         BasicTextField(
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Search
+                imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(
-                onSearch = {
+                onDone = {
                     focusManager.clearFocus()
-                    events(UnsplashPhotoEvent.FetchUnsplashPhotos(viewState.searchQuery))
                 }
             ),
             modifier = Modifier
@@ -82,12 +91,12 @@ fun UnsplashPhotosScreen(
                     clip = true
                 }
                 .background(
-                    color = Color.White,
+                    color = White,
                     shape = RoundedCornerShape(16.dp)
                 )
                 .border(
                     width = 1.dp,
-                    color = Color.White,
+                    color = White,
                     shape = RoundedCornerShape(16.dp)
                 )
                 .padding(start = 16.dp),
@@ -95,17 +104,21 @@ fun UnsplashPhotosScreen(
                 fontSize = 14.sp
             ),
             singleLine = true,
-            value = viewState.searchQuery!!,
+            value = searchQuery,
             onValueChange = {
+                setIsVisibleNoSearchResult(false)
+                setSearchQuery(it)
                 events(UnsplashPhotoEvent.SearchQueryChangedAcknowledged(it))
             },
             decorationBox = { innerTextField ->
                 Box(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(44.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     Box {
-                        if (viewState.searchQuery.isNullOrEmpty()) {
+                        if (searchQuery.isEmpty()) {
                             Text(
                                 text = "Search...",
                                 color = Gray,
@@ -116,28 +129,35 @@ fun UnsplashPhotosScreen(
                         }
                         innerTextField()
                     }
-                    IconButton(
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd),
-                        onClick = {
-                            focusManager.clearFocus()
-                            events(UnsplashPhotoEvent.FetchUnsplashPhotos(viewState.searchQuery))
-                        }
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_search),
-                            contentDescription = "Search Icon",
+                    if (searchQuery.isNotEmpty()) {
+                        IconButton(
                             modifier = Modifier
-                                .clip(CircleShape)
                                 .align(Alignment.CenterEnd),
-                            tint = Primary
-                        )
+                            onClick = {
+                                setIsVisibleNoSearchResult(false)
+                                focusManager.clearFocus()
+                                setSearchQuery("")
+                                events(UnsplashPhotoEvent.SearchQueryChangedAcknowledged(""))
+                            }
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_close),
+                                contentDescription = "Search Icon",
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .align(Alignment.CenterEnd),
+                                tint = Gray
+                            )
+                        }
                     }
                 }
             }
         )
         if (unsplashPhotos != null) {
-            LazyColumn {
+            LazyColumn(state = listState) {
+                if (listState.isScrollInProgress) {
+                    focusManager.clearFocus()
+                }
                 itemsIndexed(
                     items = unsplashPhotos
                 ) { _, item ->
@@ -148,9 +168,19 @@ fun UnsplashPhotosScreen(
                 when {
                     loadState.refresh is LoadState.Loading -> {
                         LinearProgressIndicator(
-                            backgroundColor = Color.White,
+                            backgroundColor = White,
                             color = Primary,
                             modifier = Modifier.padding(top = 64.dp)
+                        )
+                        setIsVisibleNoSearchResult(true)
+                    }
+                    loadState.refresh is LoadState.NotLoading && isVisibleNoSearchResult && unsplashPhotos.itemSnapshotList.isEmpty() -> {
+                        Text(
+                            modifier = Modifier.padding(top = 96.dp),
+                            text = "No Result",
+                            fontSize = 24.sp,
+                            color = Gray,
+                            fontWeight = FontWeight.SemiBold
                         )
                     }
                     loadState.append is LoadState.Error -> {
@@ -203,7 +233,7 @@ fun UnsplashPhotoItem(
         ) {
             Text(
                 text = "${unsplashPhoto?.user?.name}",
-                style = TextStyle(color = White, fontSize = 16.sp)
+                style = TextStyle(color = White, fontSize = 15.sp)
             )
         }
     }

@@ -11,9 +11,12 @@ import com.example.unsplashapicompose.navigation.NavigationManager
 import com.example.unsplashapicompose.ui.BaseViewModel
 import com.example.unsplashapicompose.ui.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,18 +25,24 @@ class UnsplashPhotosViewModel @Inject constructor(
     private val navigationManager: NavigationManager
 ) : BaseViewModel<UnsplashPhotoEvent>() {
 
+    private var searchUnsplashPhotosJob: Job? = null
+
     private val _uiState = MutableStateFlow(UnsplashPhotoState())
     val uiState: StateFlow<UnsplashPhotoState> = _uiState
 
     override fun handleEvent(event: UnsplashPhotoEvent) {
         when (event) {
             is UnsplashPhotoEvent.FetchUnsplashPhotos -> {
-                val query = if (event.query.isNullOrEmpty()) "Cat" else event.query
+                val query = event.query.ifEmpty { "Cat" }
                 searchPhotos(query)
             }
             is UnsplashPhotoEvent.SearchQueryChangedAcknowledged -> {
-                _uiState.value = uiState.value.build {
-                    this.searchQuery = event.query
+                searchUnsplashPhotosJob?.cancel()
+                searchUnsplashPhotosJob = viewModelScope.launch {
+                    delay(500)
+                    _uiState.value = uiState.value.build {
+                        this.searchQuery = event.query
+                    }
                 }
             }
             is UnsplashPhotoEvent.ViewUnsplashPhoto -> {
