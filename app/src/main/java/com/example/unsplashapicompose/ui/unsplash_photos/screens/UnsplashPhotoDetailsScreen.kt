@@ -58,7 +58,7 @@ fun UnsplashPhotoDetailsScreen(
                 )
             }
             Text(
-                text = viewState.unsplashPhoto?.description ?: "",
+                text = viewState.unsplashPhoto?.description ?: "আমার সোনার বাংলা আমি তোমায় ভালোবাসি",
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
                     .fillMaxWidth()
