@@ -51,7 +51,7 @@ fun UnsplashPhotoDetailsScreen(
             ) {
                 Image(
                     painter = rememberAsyncImagePainter(viewState.unsplashPhoto?.urls?.regular),
-                    contentDescription = "Unsplash Image",
+                    contentDescription = "Unsplash Imagasdsadfe",
                     modifier = Modifier
                         .fillMaxSize(),
                     contentScale = ContentScale.Crop
