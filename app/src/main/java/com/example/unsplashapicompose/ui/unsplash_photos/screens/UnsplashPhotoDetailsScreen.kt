@@ -65,7 +65,7 @@ fun UnsplashPhotoDetailsScreen(
                     .padding(horizontal = 16.dp)
             )
             Text(
-                text = viewState.unsplashPhoto?.alt_description ?: "",
+                text = viewState.unsplashPhoto?.alt_description ?: "তোমায়",
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
                     .fillMaxWidth()
