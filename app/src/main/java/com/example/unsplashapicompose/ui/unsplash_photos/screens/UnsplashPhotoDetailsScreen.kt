@@ -58,14 +58,14 @@ fun UnsplashPhotoDetailsScreen(
                 )
             }
             Text(
-                text = viewState.unsplashPhoto?.description ?: "No Description",
+                text = viewState.unsplashPhoto?.description ?: "sdfsdf",
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             )
             Text(
-                text = viewState.unsplashPhoto?.alt_description ?: "No Alt Description",
+                text = viewState.unsplashPhoto?.alt_description ?: "sfddf",
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
                     .fillMaxWidth()
