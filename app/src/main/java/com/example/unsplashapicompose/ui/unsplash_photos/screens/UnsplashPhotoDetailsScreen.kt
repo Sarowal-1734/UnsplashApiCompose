@@ -58,7 +58,7 @@ fun UnsplashPhotoDetailsScreen(
                 )
             }
             Text(
-                text = viewState.unsplashPhoto?.description ?: "",
+                text = viewState.unsplashPhoto?.description ?: "Commit 1",
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
                     .fillMaxWidth()
