@@ -1,29 +1,13 @@
 buildscript {
-    ext {
-        ext {
-            composeVersion = '1.1.1'
-            hiltVersion = '2.38.1'
-            coroutinesVersion = '1.4.2'
-            okhttpLoggingVersion = '4.9.0'
-            retrofitVersion = '2.9.0'
-            gsonVersion = '2.8.2'
-            workVersion = '2.7.1'
-            fragmentVersion = '1.4.1'
-            pagingVersion = '3.1.0-alpha04'
-            navigationVersion = '2.4.1'
-            materialVersion = '1.2.0'
-            lifecycleVersion = '2.2.0'
-        }
-    }
     repositories {
         google()
         mavenCentral()
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21'
-        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.40.1'
+        classpath libs.android.gradle
+        classpath libs.jetbrains.kotlin.gradle.plugin
+        classpath libs.hilt.gradle.plugin
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -37,8 +21,8 @@ allprojects {
     }
     configurations.all {
         resolutionStrategy {
-            force 'androidx.compose.ui:ui-tooling-preview:1.0.5'
-            force 'androidx.compose.ui:ui-tooling:1.0.5'
+            force "androidx.compose.ui:ui-tooling-preview:1.4.2"
+            force "androidx.compose.ui:ui-tooling:1.4.2"
         }
     }
 }
