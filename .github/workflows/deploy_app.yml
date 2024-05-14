@@ -50,7 +50,7 @@ jobs:
       - name: Zip Files
         uses: papeloto/action-zip@v1
         with:
-          files: ${{ steps.releaseAab.outputs.aabfile }} ${{ steps.releaseApk.outputs.apkfile }}
+          file: ${{ steps.releaseApk.outputs.apkfile }}
           dest: ${{ steps.releaseApk.outputs.apkfile }}.zip
 
       - name: Upload Release Build to Artifacts
