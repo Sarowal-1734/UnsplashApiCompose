@@ -74,7 +74,7 @@ jobs:
       #          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
       #          initial_comment: "Release build is now available."
       #
-      - name: upload apk to Firebase App Distribution
+      - name: Upload apk to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{secrets.FIREBASE_APP_ID_RELEASE}}
