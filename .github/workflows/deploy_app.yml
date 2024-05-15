@@ -6,7 +6,6 @@ on:
         type: string
         required: true
         description: "Release Notes"
-        default: "Generate release build"
 
 jobs:
   build:
