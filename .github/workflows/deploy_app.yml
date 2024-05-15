@@ -1,4 +1,4 @@
-name: Production Builds
+name: App Development Pipeline
 on:
   workflow_dispatch:
     inputs:
@@ -9,6 +9,7 @@ on:
 
 jobs:
   build:
+    name: Android Deployment
     runs-on: ubuntu-latest
 
     steps:
