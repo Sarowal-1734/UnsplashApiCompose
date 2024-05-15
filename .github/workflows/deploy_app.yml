@@ -82,7 +82,7 @@ jobs:
           file: ${{ steps.releaseApk.outputs.apkfile }}
 
       - name: Upload Release Build to Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release-artifacts
           path: ${{ steps.releaseApk.outputs.apkfile }}
