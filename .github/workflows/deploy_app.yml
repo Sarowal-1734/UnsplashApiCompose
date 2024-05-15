@@ -17,10 +17,10 @@ jobs:
           distribution: 'adopt'
 
       - name: Build with Gradle
-        run: bash ./gradlew build
+        run: ./gradlew build
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
           name: Unsplash App
-          path: app/build/outputs/apk/dev/debug/app-debug.apk
+          path: app/build/outputs/apk/dev/debug/app-dev-debug.apk
